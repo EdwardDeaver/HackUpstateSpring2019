@@ -6,6 +6,8 @@ function mousePressed() { getAudioContext().resume() }
   // Initialize the base layer
   var osc2Freq = [];
   var osc1Freq = [];
+  var osc3Freq = [];
+
 
   var osc;
   var playing = false;
@@ -40,13 +42,24 @@ function draw() {
   stroke(255,170,238);
   strokeWeight(5);
   for (let i = 0; i < waveform.length; i++) {
-   let x = map(i, 0, waveform.length, 0, width);
-   let y = map(waveform[i], 1, -1, 1000, 0);
-  // console.log(osc2Freq[i]);
-   vertex(i*1000 / 100, osc2Freq[i]);
+    let x = map(i, 0, waveform.length, 0, width);
+    let y = map(waveform[i], 1, -1, 1000, 0);
+    vertex(i*1000 / 100, osc2Freq[i]);
   }
   endShape();
 
+  // OSC 3
+  beginShape();
+  stroke(0,170,238);
+  strokeWeight(5);
+  for (let i = 0; i < waveform.length; i++) {
+    let x = map(i, 0, waveform.length, 0, width);
+    let y = map(waveform[i], 1, -1, 1000, 0);
+    vertex(i*1000 / 100, osc3Freq[i]+500);
+  }
+  endShape();
+
+  stroke(255,170,238);
   text('STAE Centro Data', width/2, height/5);
 
   }
@@ -68,23 +81,27 @@ function getFile(url, callback, target) {
 async function loadMaps(BusMaps){
     for (var i = 0; i < BusMaps.results.length; i++) {
       var realFixedCords = [];
-      osc1.amp(0.2);
-      document.getElementById("nowplaying").innerHTML = "Now Playing: "+BusMaps.results[i].data.name+" Run time: " + ((BusMaps.results[i].data.path.coordinates.length*3)/60) + " minutes" + "<br>" + " On Chrome click anywhere to hear the audio";
+     
+      document.getElementById("nowplaying2").innerHTML = "Now Playing: "+BusMaps.results[i].data.name+" Run time: " + ((BusMaps.results[i].data.path.coordinates.length*3)/60) + " minutes" ;
 
-      //Uses Path Color to create sound
+
+      for (var z = 0; z < BusMaps.results[i].data.path.coordinates.length; z++) {
+              //Uses Path Color to create sound
+               osc1.amp(0.1);
+              osc2.amp(1);
+              osc3.amp(1);
       osc1Frequency = ((parseInt(BusMaps.results[i].data.color, 16) - 60) / (600 - 60)/70);
       osc1.freq(osc1Frequency);
-      osc1Freq.push(osc1Frequency);
-      await sleep(1000);
-      for (var z = 0; z < BusMaps.results[i].data.path.coordinates.length; z++) {
-        osc2.amp(1);
-        osc3.amp(1);
+        osc1Freq.push(osc1Frequency*-1);
+
         //Uses Current Path Current point Latitude
         osc2Frequency = BusMaps.results[i].data.path.coordinates[z][1]* Math.random()*10;
         osc2Freq.push(osc2Frequency);
         osc2.freq(osc2Frequency, 1);
-        osc2Freq.push();
-        osc3.freq((BusMaps.results[i].data.path.coordinates[z][0]*-10)/ (600 - 60* Math.random()));
+        osc3.freq(BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2);
+        osc3Frequency = BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2;
+
+        osc3Freq.push(osc3Frequency*-1);
         realFixedCords[z] = [BusMaps.results[i].data.path.coordinates[z][1], BusMaps.results[i].data.path.coordinates[z][0]];
         await sleep(3000);
         }
