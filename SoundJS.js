@@ -1,19 +1,19 @@
+// VARIABLES
+mute = false;
+multiple = 1024;
+var osc2Freq = [];
+var osc1Freq = [];
+var osc3Freq = [];
+var OSC1Vol = 0.1;
+var OSC2Vol = 1;
+var OSC3Vol = 1;
+var osc;
+var playing = false;
 
-// Make it so if you click you can hear the sound on  Chrome
-function mousePressed() { getAudioContext().resume() }
-
-  // Set the position and zoom level of the map
-  // Initialize the base layer
-  var osc2Freq = [];
-  var osc1Freq = [];
-  var osc3Freq = [];
-
-
-  var osc;
-  var playing = false;
-
-  function setup() {
-  createCanvas(1500, 1500);
+// SETUP 
+function setup() {
+  var mute = false;
+  createCanvas(windowWidth, windowHeight);
   backgroundColor = color(0,0,0);
   textAlign(CENTER);
   osc1 = new p5.Oscillator();
@@ -32,15 +32,20 @@ function mousePressed() { getAudioContext().resume() }
             loadMaps(size.response);
         }, "vehicleLocations");
   fft = new p5.FFT();
+  osc1.amp(OSC1Vol);
+  osc2.amp(OSC2Vol);
+  osc3.amp(OSC3Vol);
+}
 
-  }
 
+// DRAW LOOP
 function draw() {
   fill('#222222');
   let waveform = fft.waveform(); // analyze the waveform
   beginShape();
   stroke(255,170,238);
   strokeWeight(5);
+  // OSC 2
   for (let i = 0; i < waveform.length; i++) {
     let x = map(i, 0, waveform.length, 0, width);
     let y = map(waveform[i], 1, -1, 1000, 0);
@@ -58,13 +63,11 @@ function draw() {
     vertex(i*1000 / 100, osc3Freq[i]+500);
   }
   endShape();
-
   stroke(255,170,238);
   text('STAE Centro Data', width/2, height/5);
+}
 
-  }
-
-
+// Obtain file
 function getFile(url, callback, target) {
   var xhr = new XMLHttpRequest();
   xhr.responseType = 'json';
@@ -78,36 +81,46 @@ function getFile(url, callback, target) {
   xhr.send();
 }
 
+// Run through the maps to make sound
 async function loadMaps(BusMaps){
-    for (var i = 0; i < BusMaps.results.length; i++) {
-      var realFixedCords = [];
-     
-      document.getElementById("nowplaying2").innerHTML = "Now Playing: "+BusMaps.results[i].data.name+" Run time: " + ((BusMaps.results[i].data.path.coordinates.length*3)/60) + " minutes" ;
-
-
-      for (var z = 0; z < BusMaps.results[i].data.path.coordinates.length; z++) {
-              //Uses Path Color to create sound
-               osc1.amp(0.1);
-              osc2.amp(1);
-              osc3.amp(1);
+  for (var i = 0; i < BusMaps.results.length; i++) {
+    var realFixedCords = [];
+    document.getElementById("nowplaying2").innerHTML = "Now Playing: "+BusMaps.results[i].data.name+" Run time: " + ((BusMaps.results[i].data.path.coordinates.length*3)/60) + " minutes" ;
+    for (var z = 0; z < BusMaps.results[i].data.path.coordinates.length; z++) {
       osc1Frequency = ((parseInt(BusMaps.results[i].data.color, 16) - 60) / (600 - 60)/70);
       osc1.freq(osc1Frequency);
-        osc1Freq.push(osc1Frequency*-1);
-
-        //Uses Current Path Current point Latitude
-        osc2Frequency = BusMaps.results[i].data.path.coordinates[z][1]* Math.random()*10;
-        osc2Freq.push(osc2Frequency);
-        osc2.freq(osc2Frequency, 1);
-        osc3.freq(BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2);
-        osc3Frequency = BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2;
-
-        osc3Freq.push(osc3Frequency*-1);
-        realFixedCords[z] = [BusMaps.results[i].data.path.coordinates[z][1], BusMaps.results[i].data.path.coordinates[z][0]];
-        await sleep(3000);
-        }
+      osc1Freq.push(osc1Frequency*-1);
+      //Uses Current Path Current point Latitude
+      osc2Frequency = BusMaps.results[i].data.path.coordinates[z][1]* Math.random()*10;
+      osc2Freq.push(osc2Frequency);
+      osc2.freq(osc2Frequency, 1);
+      osc3.freq(BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2);
+      osc3Frequency = BusMaps.results[i].data.path.coordinates[z][0]* Math.random()*2;
+      osc3Freq.push(osc3Frequency*-1);
+      realFixedCords[z] = [BusMaps.results[i].data.path.coordinates[z][1], BusMaps.results[i].data.path.coordinates[z][0]];
+      // Reset the line if it gets to the edge of the screen
+      if((z / windowWidth) % 0.1 > 0.098){
+        clear();
+        osc1Freq=[];
+        osc2Freq=[];
+        osc3Freq=[];
       }
+      await sleep(3000);
+    }
+    clear();
+    osc1Freq=[];
+    osc2Freq=[];
+    osc3Freq=[];
   }
-
+}
+// Sleep
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Make it so if you click you can hear the sound on  Chrome
+function mousePressed() { 
+      if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
 }
