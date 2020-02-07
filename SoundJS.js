@@ -1,3 +1,8 @@
+// MADE BY: EDWARD DEAVER, IV
+// WEBSITE: edwarddeaver.me
+// HACK UPSTATE 2019
+
+
 // VARIABLES
 mute = false;
 multiple = 1024;
