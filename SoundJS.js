@@ -91,6 +91,7 @@ async function loadMaps(BusMaps){
   for (var i = 0; i < BusMaps.results.length; i++) {
     var realFixedCords = [];
     document.getElementById("nowplaying2").innerHTML = "Now Playing: "+BusMaps.results[i].data.name+" Run time: " + ((BusMaps.results[i].data.path.coordinates.length*3)/60) + " minutes" ;
+    console.log(i);
     for (var z = 0; z < BusMaps.results[i].data.path.coordinates.length; z++) {
       osc1Frequency = ((parseInt(BusMaps.results[i].data.color, 16) - 60) / (600 - 60)/70);
       osc1.freq(osc1Frequency);
