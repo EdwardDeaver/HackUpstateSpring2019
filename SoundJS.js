@@ -33,9 +33,12 @@ function setup() {
   osc3.setType('sine');
   osc3.amp(0);
   osc3.start();
-  getFile("https://municipal.systems/v1/places/syc-ny/dataTypes/transit-route/data?key=f15a3868-3d82-47d3-9288-b4c41309904c&filters%5B0%5D%5Bdata%5D%5Boperators%5D%5B%24contains%5D%5B0%5D=Centro", function(size) {
+    getFile("https://municipal.systems/v1/places/syc-ny/dataTypes/transit-route/data?key=f15a3868-3d82-47d3-9288-b4c41309904c&filters%5B0%5D%5Bdata%5D%5Boperators%5D%5B%24contains%5D%5B0%5D=Centro", function(size) {
             loadMaps(size.response);
         }, "vehicleLocations");
+  // getFile("https://municipal.systems/v1/places/syc-ny/dataTypes/transit-route/data?key=f15a3868-3d82-47d3-9288-b4c41309904c&filters%5B0%5D%5Bdata%5D%5Boperators%5D%5B%24contains%5D%5B0%5D=Centro", function(size) {
+  //          loadMaps(size.response);
+  //      }, "vehicleLocations");
   fft = new p5.FFT();
   osc1.amp(OSC1Vol);
   osc2.amp(OSC2Vol);
