@@ -33,7 +33,7 @@ function setup() {
   osc3.setType('sine');
   osc3.amp(0);
   osc3.start();
-    getFile("https://municipal.systems/v1/places/syc-ny/dataTypes/transit-route/data?key=f15a3868-3d82-47d3-9288-b4c41309904c&filters%5B0%5D%5Bdata%5D%5Boperators%5D%5B%24contains%5D%5B0%5D=Centro", function(size) {
+getFile("https://github.com/EdwardDeaver/HackUpstateSpring2019/raw/master/ea599807-c591-4886-a929-53a0349e329f.json", function(size) {
             loadMaps(size.response);
         }, "vehicleLocations");
   // getFile("https://municipal.systems/v1/places/syc-ny/dataTypes/transit-route/data?key=f15a3868-3d82-47d3-9288-b4c41309904c&filters%5B0%5D%5Bdata%5D%5Boperators%5D%5B%24contains%5D%5B0%5D=Centro", function(size) {
